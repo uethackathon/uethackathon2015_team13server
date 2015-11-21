@@ -5,6 +5,7 @@
 
 from collections import Counter
 import xml.etree.ElementTree as ET
+import subprocess
 
 
 class TagParser():
@@ -143,11 +144,9 @@ class NLPLibrary:
         """Constructor for NLPLibrary"""
 
     #======================================
-    def add_tag(self):
-        """
-        Args:
+    def add_tag(self, file_input="", file_output=""):
+        # IMPORTANT: The input and output file MUST be absolute path
 
-        Returns:
+        subprocess.call(['./vnTagger.sh', '-i %s -uo %s' % (file_input, file_output)])
 
-        """
 
