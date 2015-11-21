@@ -134,8 +134,6 @@ class TagParser():
                     'word': word.text
                 })
                 conjunction.append(word.text)
-            print conjunction
-            print ' '.join(conjunction)
             self.sentences.append(' '.join(conjunction))
 
         return wordlist_tagged
@@ -166,9 +164,18 @@ class NLPLibrary:
     def _add_tag(self, file_input="", file_output=""):
         # IMPORTANT: The input and output file MUST be absolute path
         if file_output == "":
-            file_output = '/tmp/out.smartfeedback'
+            file_output = '/tmp/tagged.smartfeedback'
+        file_input = self._split_sentence(file_input)
         subprocess.call(['./vnTagger.sh', '-i %s -uo %s' % (file_input, file_output)])
         self.TP.add_bag_xml_file(file_output)
+
+    #======================================
+    def _split_sentence(self, file_input="", file_output=""):
+        # IMPORTANT: The input and output file MUST be absolute path
+        if file_output == "":
+            file_output = '/tmp/sentences.smartfeedback'
+        subprocess.call(['./vnSentDetector.sh', '-i %s -o %s' % (file_input, file_output)])
+        return file_output
 
     #======================================
     def tag_paragraph(self, paragraph=""):
