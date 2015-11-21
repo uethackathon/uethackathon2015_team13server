@@ -37,14 +37,24 @@ class TagParser():
         """Constructor for TagParser"""
 
     #======================================
-    def extract_sentence(self, input_sentence=""):
+    def extract_word_tags(self, input_sentence=""):
         """
         Args:
             (self, input_sentence)
         Returns:
 
         """
+        wordlist_tagged = []
+        words = input_sentence.split(' ')
+        for word in words:
+            word, tag= word.split('/')
+            if len(word) > 1 and self._tag_list.has_key(tag):
+                wordlist_tagged.append({
+                    'tag': tag,
+                    'word': word
+                })
 
+        return wordlist_tagged
 
 
 
