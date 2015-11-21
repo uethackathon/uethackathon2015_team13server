@@ -4,6 +4,7 @@
 """
 
 from collections import Counter
+import xml.etree.ElementTree as ET
 
 
 class TagParser():
@@ -47,8 +48,35 @@ class TagParser():
         if wordlist is not None:
             self._wordlist = wordlist
 
+    #======================================
+    def _add_bag(self, tagged_word_list=None):
+        """
+        Args:
+            self, tagged_word_list=None
+        Returns:
+
+        """
+        for word in tagged_word_list:
+            # Check if the global bag don't have tag
+            if not self._bag_of_tagged_word.has_key(word['tag']):
+                self._bag_of_tagged_word[word['tag']] = []
+
+            # Insert a word into _
+            if word['word'] not in self._bag_of_tagged_word:
+                self._bag_of_tagged_word[word['tag']].append(word['word'])
+
+            # Count the word to find the popular of word
+            self._popular_data[word['word']] += 1
+
+            # Word to tag mapping
+            self._wordlist[word['word']] = word['tag']
+
+        return True
+
+
+
     # ======================================
-    def extract_word_tags(self, input_sentence=""):
+    def extract_word_tags_raw_sentence(self, input_sentence=""):
         """
         Args:
             (self, input_sentence)
@@ -68,7 +96,7 @@ class TagParser():
         return wordlist_tagged
 
     # ======================================
-    def add_bag_item(self, input_sentence=""):
+    def add_bag_raw_sentence(self, input_sentence=""):
         """
         Args:
 
@@ -77,18 +105,49 @@ class TagParser():
 
         """
         tagged_words = self.extract_word_tags(input_sentence)
-        for word in tagged_words:
-            # Check if the global bag don't have tag
-            if not self._bag_of_tagged_word.has_key(word['tag']):
-                self._bag_of_tagged_word[word['tag']] = {}
+        self._add_bag(tagged_words)
 
-            # Insert a word into _
-            self._bag_of_tagged_word[word['tag']].add(word['word'])
+    # ======================================
+    def extract_words_xml_file(self, filepath=""):
+        doc = ET.parse(filepath)
 
-            # Count the word to find the popular of word
-            self._popular_data[word['word']] += 1
+        wordlist_tagged = []
+        root = doc.getroot()
+        for sentence in root.findall('s'):
+            for word in sentence.findall('w'):
+                wordlist_tagged.append({
+                    'tag': word.get('pos'),
+                    'word': word.text
+                })
 
-            # Word to tag mapping
-            self._wordlist[word['word']] = word['tag']
+        return wordlist_tagged
+
+    #======================================
+    def add_bag_xml_file(self, filepath=""):
+        """
+        Args:
+            self, filepath=""
+        Returns:
+
+        """
+        tagged_words = self.extract_words_xml_file(filepath)
+        self._add_bag(tagged_words)
+
+
+class NLPLibrary:
+    """"""
+
+    #=========================================
+    def __init__(self):
+        """Constructor for NLPLibrary"""
+
+    #======================================
+    def add_tag(self):
+        """
+        Args:
+
+        Returns:
+
+        """
 
 
