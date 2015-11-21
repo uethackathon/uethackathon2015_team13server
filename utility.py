@@ -223,7 +223,7 @@ class ClassifySentence:
             label = self.clf.predict([sentence_pos, sentence_neg, sentence_neu])[0]
             json_data.append({
                 'content': sentence,
-                'classification': label
+                'classification': label.lower()
             })
 
         return json_data
