@@ -160,7 +160,7 @@ class NLPLibrary:
     def _split_sentence(self, file_input="", file_output=""):
         # IMPORTANT: The input and output file MUST be absolute path
         if file_output == "":
-            file_output = '/tmp/sentences%s.smartfeedback' % (str(round(time.time())))
+            file_output = '/tmp/sentences.smartfeedback'
         subprocess.call(['./vnSentDetector.sh', '-i %s -o %s' % (file_input, file_output)])
         return file_output
 
@@ -175,7 +175,7 @@ class NLPLibrary:
         """
         # Write paragraph to file prepare for Tagger
 
-        filepath = '/tmp/%sparagraph.input.smartfeedback' % (str(round(time.time())))
+        filepath = '/tmp/paragraph.input.smartfeedback' 
         f = open(filepath, 'w')
         f.write(paragraph)
         f.close()
