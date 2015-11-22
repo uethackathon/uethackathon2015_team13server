@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd external_lib/sentence_detector
+cd ./external_lib/sentence_detector
 
 # The main program to run
 PROGRAM=vn.hus.nlp.sd-2.0.0.jar
