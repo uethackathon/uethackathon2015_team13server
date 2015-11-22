@@ -151,7 +151,7 @@ class NLPLibrary:
     def _add_tag(self, file_input="", file_output=""):
         # IMPORTANT: The input and output file MUST be absolute path
         if file_output == "":
-            file_output = '/tmp/tagged.smartfeedback'
+            file_output = '/tmp/tagged%s.smartfeedback' % (str(round(time.time())))
         file_input = self._split_sentence(file_input)
         subprocess.call(['./vnTagger.sh', '-i %s -upo %s' % (file_input, file_output)])
         return file_output
@@ -160,7 +160,7 @@ class NLPLibrary:
     def _split_sentence(self, file_input="", file_output=""):
         # IMPORTANT: The input and output file MUST be absolute path
         if file_output == "":
-            file_output = '/tmp/sentences.smartfeedback'
+            file_output = '/tmp/sentences%s.smartfeedback' % (str(round(time.time())))
         subprocess.call(['./vnSentDetector.sh', '-i %s -o %s' % (file_input, file_output)])
         return file_output
 
@@ -174,10 +174,12 @@ class NLPLibrary:
 
         """
         # Write paragraph to file prepare for Tagger
+
         filepath = '/tmp/%sparagraph.input.smartfeedback' % (str(round(time.time())))
         f = open(filepath, 'w')
         f.write(paragraph)
         f.close()
+
 
         # Call add tag to assign tag to sentences
         taggedfile = self._add_tag(file_input=filepath)
@@ -206,6 +208,10 @@ class ClassifySentence:
         positive_prop = np.sum(Positive_Matrix * Positive_VectorCount.transform(vocab).T)
         negative_prop = np.sum(Negative_Matrix * Negative_VectorCount.transform(vocab).T)
         neutral_prop = np.sum(Neutral_Matrix * Neutral_VectorCount.transform(vocab).T)
+        print input_sentence
+        print self.clf.predict(np.array([positive_prop, neutral_prop, negative_prop]).reshape(1,-1))
+        print positive_prop, negative_prop, neutral_prop
+        print "------"
         return positive_prop, negative_prop, neutral_prop
 
     # ======================================
@@ -220,7 +226,7 @@ class ClassifySentence:
                                                                               Neutral_VectorCount=self.NT_vc,
                                                                               Neutral_Matrix=self.NT_matrix,
                                                                               input_sentence=sentence)
-            label = self.clf.predict([sentence_pos, sentence_neg, sentence_neu])[0]
+            label = self.clf.predict(np.array([sentence_pos, sentence_neu, sentence_neg]).reshape(1,-1))[0]
             json_data.append({
                 'content': sentence,
                 'classification': label.lower()
